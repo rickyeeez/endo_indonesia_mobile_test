@@ -1,0 +1,30 @@
+{
+  "todo-tree.general.tags": [
+    "TODO",
+    "BUG",
+    "TUGAS"
+  ],
+  "todo-tree.highlights.customHighlight": {
+    "TODO": {
+      "foreground": "#ffffff",
+      "background": "#d32f2f",
+      "icon": "checklist",
+      "iconColor": "#d32f2f",
+      "type": "label"
+    },
+    "TUGAS": {
+      "foreground": "#ffffff",
+      "background": "#d32f2f",
+      "icon": "tasklist",
+      "iconColor": "#d32f2f",
+      "type": "label"
+    },
+    "BUG": {
+      "foreground": "#ffffff",
+      "background": "#f44336",
+      "icon": "bug",
+      "iconColor": "#f44336",
+      "type": "label"
+    }
+  }
+}
