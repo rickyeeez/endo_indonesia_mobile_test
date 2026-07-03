@@ -8,11 +8,11 @@
   "servers": [
     {
       "url": ".",
-      "description": "Relative Path Server"
+      "description": "Current Directory Server"
     }
   ],
   "paths": {
-    "/login.php": {
+    "login.php": {
       "post": {
         "summary": "User Login",
         "description": "Autentikasi pengguna dan mengembalikan token serta data profil user.",
@@ -102,7 +102,7 @@
         }
       }
     },
-    "/devices.php": {
+    "devices.php": {
       "get": {
         "summary": "Daftar Alat Medis",
         "description": "Mengambil daftar alat medis dengan opsi pencarian dan simulasi error.",
@@ -153,7 +153,7 @@
         }
       }
     },
-    "/submit_inquiry.php": {
+    "submit_inquiry.php": {
       "post": {
         "summary": "Pengajuan Penawaran (Inquiry)",
         "description": "Mengirimkan formulir penawaran alat medis dan mengurangi stok barang.",

@@ -24,16 +24,16 @@ class CatalogView extends GetView<CatalogController> {
         foregroundColor: Colors.white,
         actions: [
           // Shopping Cart / Inquiry Badge
-          Obx(() => Stack(
-                alignment: Alignment.center,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.description_outlined),
-                    tooltip: 'Keranjang Penawaran',
-                    onPressed: () => Get.toNamed(AppRoutes.inquiry),
-                  ),
-                  if (inquiry.itemCount > 0)
-                    Positioned(
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.description_outlined),
+                tooltip: 'Keranjang Penawaran',
+                onPressed: () => Get.toNamed(AppRoutes.inquiry),
+              ),
+              Obx(() => inquiry.itemCount > 0
+                  ? Positioned(
                       right: 8,
                       top: 8,
                       child: Container(
@@ -57,8 +57,9 @@ class CatalogView extends GetView<CatalogController> {
                         ),
                       ),
                     )
-                ],
-              )),
+                  : const SizedBox.shrink()),
+            ],
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             tooltip: 'Keluar',
@@ -73,7 +74,8 @@ class CatalogView extends GetView<CatalogController> {
         children: [
           // Welcome Card
           Obx(() {
-            if (auth.user.value == null) return const SizedBox.shrink();
+            final user = auth.user.value;
+            if (user == null) return const SizedBox.shrink();
             return Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16.0),
@@ -83,22 +85,21 @@ class CatalogView extends GetView<CatalogController> {
                   CircleAvatar(
                     backgroundColor: Colors.red.shade700,
                     foregroundColor: Colors.white,
-                    child: Text(
-                        auth.user.value!.name.substring(0, 1).toUpperCase()),
+                    child: Text(user.name.substring(0, 1).toUpperCase()),
                   ),
                   const SizedBox(width: 12),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Halo, ${auth.user.value!.name}',
+                        'Halo, ${user.name}',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.red.shade900,
                         ),
                       ),
                       Text(
-                        auth.user.value!.email,
+                        user.email,
                         style:
                             const TextStyle(fontSize: 12, color: Colors.grey),
                       ),
@@ -139,34 +140,30 @@ class CatalogView extends GetView<CatalogController> {
           ),
 
           // Category Chips Horizontal Scroll
-          Obx(() {
-            final categories = ['All', 'Cardiology', 'ICU', 'Radiology'];
-            return SizedBox(
-              height: 48,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                itemCount: categories.length,
-                itemBuilder: (ctx, idx) {
-                  final category = categories[idx];
-                  final isSelected =
-                      controller.selectedCategory.value == category;
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: FilterChip(
-                      label: Text(category),
-                      selected: isSelected,
-                      selectedColor: Colors.red.shade200,
-                      checkmarkColor: Colors.red.shade900,
-                      onSelected: (selected) {
-                        controller.setCategory(category);
-                      },
-                    ),
-                  );
-                },
-              ),
-            );
-          }),
+          SizedBox(
+            height: 48,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              itemCount: 4,
+              itemBuilder: (ctx, idx) {
+                final categories = ['All', 'Cardiology', 'ICU', 'Radiology'];
+                final category = categories[idx];
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: Obx(() => FilterChip(
+                        label: Text(category),
+                        selected: controller.selectedCategory.value == category,
+                        selectedColor: Colors.red.shade200,
+                        checkmarkColor: Colors.red.shade900,
+                        onSelected: (selected) {
+                          controller.setCategory(category);
+                        },
+                      )),
+                );
+              },
+            ),
+          ),
           const SizedBox(height: 8),
 
           // Catalog List Area
@@ -218,176 +215,171 @@ class CatalogView extends GetView<CatalogController> {
                 );
               }
 
-              return ListView.builder(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                itemCount: items.length,
-                itemBuilder: (ctx, i) {
-                  final device = items[i];
-                  final isOutOfStock = device.stock <= 0;
-
-                  return Card(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 2,
-                    child: InkWell(
-                      onTap: () {
-                        Get.toNamed(
-                          AppRoutes.deviceDetail,
-                          arguments: device,
-                        );
-                      },
-                      borderRadius: BorderRadius.circular(12),
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Row(
-                          children: [
-                            // Icon Medis / Foto representasi
-                            Container(
-                              width: 72,
-                              height: 72,
-                              decoration: BoxDecoration(
-                                color: Colors.red.shade50,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: device.imageUrl.isNotEmpty
-                                    ? Image.network(
-                                        device.imageUrl,
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (ctx, err, stack) =>
-                                            Icon(
-                                          Icons.medical_services_outlined,
-                                          size: 40,
-                                          color: Colors.red.shade700,
-                                        ),
-                                      )
-                                    : Icon(
-                                        Icons.medical_services_outlined,
-                                        size: 40,
-                                        color: Colors.red.shade700,
-                                      ),
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            // Info Detail Singkat
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 2),
-                                    decoration: BoxDecoration(
-                                      color: Colors.red.shade100,
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    child: Text(
-                                      device.category,
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.red.shade900,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    device.name,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'Estimasi: \$${device.price.toStringAsFixed(2)}',
-                                    style: TextStyle(
-                                      color: Colors.red.shade900,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  isOutOfStock
-                                      ? const Text(
-                                          'Stok Habis (Inden)',
-                                          style: TextStyle(
-                                            color: Colors.red,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        )
-                                      : Text(
-                                          'Tersedia: ${device.stock} unit',
-                                          style: TextStyle(
-                                            color: Colors.teal.shade900,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                ],
-                              ),
-                            ),
-                            // Tombol Aksi
-                            Column(
-                              children: [
-                                IconButton(
-                                  icon: Icon(
-                                    device.isFavorite
-                                        ? Icons.bookmark
-                                        : Icons.bookmark_border,
-                                    color: Colors.orange,
-                                  ),
-                                  onPressed: () {
-                                    controller.toggleFavorite(device.id);
-                                  },
-                                ),
-                                IconButton(
-                                  icon: Icon(
-                                    Icons.add_circle_outline,
-                                    color: isOutOfStock
-                                        ? Colors.grey
-                                        : Colors.red.shade700,
-                                  ),
-                                  onPressed: isOutOfStock
-                                      ? null
-                                      : () {
-                                          try {
-                                            inquiry.addItem(device);
-                                            Get.snackbar(
-                                              'Berhasil',
-                                              '${device.name} ditambahkan ke penawaran.',
-                                              duration:
-                                                  const Duration(seconds: 1),
-                                            );
-                                          } catch (e) {
-                                            Get.snackbar(
-                                              'Error',
-                                              e
-                                                  .toString()
-                                                  .replaceAll(
-                                                      'Exception: ', ''),
-                                              backgroundColor: Colors.red,
-                                              colorText: Colors.white,
-                                            );
-                                          }
-                                        },
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              );
+              return _buildDeviceList(items, inquiry);
             }),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildDeviceList(List items, InquiryController inquiry) {
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      itemCount: items.length,
+      itemBuilder: (ctx, i) {
+        final device = items[i];
+        final isOutOfStock = device.stock <= 0;
+
+        return Card(
+          margin: const EdgeInsets.only(bottom: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 2,
+          child: InkWell(
+            onTap: () {
+              Get.toNamed(
+                AppRoutes.deviceDetail,
+                arguments: device,
+              );
+            },
+            borderRadius: BorderRadius.circular(12),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Row(
+                children: [
+                  Container(
+                    width: 72,
+                    height: 72,
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: device.imageUrl.isNotEmpty
+                          ? Image.network(
+                              device.imageUrl,
+                              fit: BoxFit.cover,
+                              errorBuilder: (ctx, err, stack) => Icon(
+                                Icons.medical_services_outlined,
+                                size: 40,
+                                color: Colors.red.shade700,
+                              ),
+                            )
+                          : Icon(
+                              Icons.medical_services_outlined,
+                              size: 40,
+                              color: Colors.red.shade700,
+                            ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.red.shade100,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            device.category,
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red.shade900,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          device.name,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Estimasi: \$${device.price.toStringAsFixed(2)}',
+                          style: TextStyle(
+                            color: Colors.red.shade900,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        isOutOfStock
+                            ? const Text(
+                                'Stok Habis (Inden)',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                            : Text(
+                                'Tersedia: ${device.stock} unit',
+                                style: TextStyle(
+                                  color: Colors.teal.shade900,
+                                  fontSize: 12,
+                                ),
+                              ),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    children: [
+                      Obx(() => IconButton(
+                            icon: Icon(
+                              controller.devices[i].isFavorite
+                                  ? Icons.bookmark
+                                  : Icons.bookmark_border,
+                              color: Colors.orange,
+                            ),
+                            onPressed: () {
+                              controller.toggleFavorite(device.id);
+                            },
+                          )),
+                      IconButton(
+                        icon: Icon(
+                          Icons.add_circle_outline,
+                          color: isOutOfStock
+                              ? Colors.grey
+                              : Colors.red.shade700,
+                        ),
+                        onPressed: isOutOfStock
+                            ? null
+                            : () {
+                                try {
+                                  inquiry.addItem(device);
+                                  Get.snackbar(
+                                    'Berhasil',
+                                    '${device.name} ditambahkan ke penawaran.',
+                                    duration: const Duration(seconds: 1),
+                                  );
+                                } catch (e) {
+                                  Get.snackbar(
+                                    'Error',
+                                    e.toString().replaceAll('Exception: ', ''),
+                                    backgroundColor: Colors.red,
+                                    colorText: Colors.white,
+                                  );
+                                }
+                              },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

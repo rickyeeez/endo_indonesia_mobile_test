@@ -1,3 +1,11 @@
+<?php
+header("Content-Type: text/html; charset=UTF-8");
+
+// Baca file openapi.json dan embed langsung ke JavaScript
+$specPath = __DIR__ . '/openapi.json';
+$specJson = file_exists($specPath) ? file_get_contents($specPath) : '{}';
+$specJson = json_encode($specJson); // escape untuk JS string
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,8 +24,11 @@
   <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-standalone-preset.js" charset="UTF-8"></script>
   <script>
     window.onload = function() {
+      var spec = JSON.parse(<?php echo $specJson; ?>);
+      // Set server URL ke direktori tempat file ini berada
+      spec.servers = [{ url: window.location.pathname.replace(/\/[^\/]*$/, ''), description: "Auto Server" }];
       window.ui = SwaggerUIBundle({
-        url: "<?php echo rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\'); ?>/openapi.json",
+        spec: spec,
         dom_id: '#swagger-ui',
         deepLinking: true,
         presets: [
