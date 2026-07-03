@@ -1,0 +1,236 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "ENDO Indonesia Mobile Test API",
+    "description": "Dokumentasi API Backend untuk Aplikasi Mobile PT ENDO Indonesia.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000/backend",
+      "description": "Local Development Server"
+    }
+  ],
+  "paths": {
+    "/login.php": {
+      "post": {
+        "summary": "User Login",
+        "description": "Autentikasi pengguna dan mengembalikan token serta data profil user.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "kandidat@endo.co.id"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "example": "password123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login Berhasil",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "success" },
+                    "message": { "type": "string", "example": "Login berhasil." },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "token": { "type": "string", "example": "mock_token_..." },
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "id": { "type": "integer", "example": 1 },
+                            "name": { "type": "string", "example": "Kandidat Test" },
+                            "email": { "type": "string", "example": "kandidat@endo.co.id" }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Email atau Password kosong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "error" },
+                    "message": { "type": "string", "example": "Email dan Password wajib diisi." }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Email atau Password salah",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "error" },
+                    "message": { "type": "string", "example": "Email atau Password salah." }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method Not Allowed"
+          }
+        }
+      }
+    },
+    "/devices.php": {
+      "get": {
+        "summary": "Daftar Alat Medis",
+        "description": "Mengambil daftar alat medis dengan opsi pencarian dan simulasi error.",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Kata kunci pencarian berdasarkan nama atau kategori alat medis",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "simulate_error",
+            "in": "query",
+            "description": "Set 'true' untuk memicu simulasi error 500",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["true", "false"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil mengambil daftar alat medis",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "success" },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/MedicalDevice"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error (Simulasi atau Database Error)"
+          }
+        }
+      }
+    },
+    "/submit_inquiry.php": {
+      "post": {
+        "summary": "Pengajuan Penawaran (Inquiry)",
+        "description": "Mengirimkan formulir penawaran alat medis dan mengurangi stok barang.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "hospital_name", "email", "items"],
+                "properties": {
+                  "name": { "type": "string", "example": "Dr. Budi Santoso" },
+                  "hospital_name": { "type": "string", "example": "RS Harapan Kita" },
+                  "email": { "type": "string", "format": "email", "example": "budi@harapankita.com" },
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": ["device_id", "quantity", "price"],
+                      "properties": {
+                        "device_id": { "type": "integer", "example": 1 },
+                        "quantity": { "type": "integer", "example": 2 },
+                        "price": { "type": "number", "example": 15000000 }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Inquiry Berhasil Dibuat",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "success" },
+                    "message": { "type": "string", "example": "Permintaan penawaran berhasil diajukan dengan ID: 1." }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Validasi gagal atau stok tidak mencukupi"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "MedicalDevice": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "1" },
+          "name": { "type": "string", "example": "USG Mindray DP-10" },
+          "category": { "type": "string", "example": "Ultrasound" },
+          "price": { "type": "number", "example": 45000000 },
+          "stock": { "type": "integer", "example": 5 },
+          "image_url": { "type": "string", "example": "https://via.placeholder.com/300" },
+          "description": { "type": "string", "example": "Sistem USG B/W portabel..." },
+          "specifications": {
+            "type": "object",
+            "example": {
+              "Display": "12.1 inch LED",
+              "Weight": "5.1 kg"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -28,12 +28,12 @@ class MedicalDevice {
       category: json['category'] ?? '',
       price: (json['price'] as num?)?.toDouble() ?? 0.0,
       description: json['description'] ?? '',
-      imageUrl: json['image_url'] ?? '', // Mapping dari database (image_url)
+      imageUrl: json['image_url'] ?? '',
       stock: json['stock'] ?? 0,
-      specifications: json['specifications'] is Map 
-          ? Map<String, dynamic>.from(json['specifications']) 
+      specifications: json['specifications'] is Map
+          ? Map<String, dynamic>.from(json['specifications'])
           : {},
-      isFavorite: false, // Local state, default to false
+      isFavorite: false,
     );
   }
 

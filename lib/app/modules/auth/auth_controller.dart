@@ -1,29 +1,32 @@
-import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
-import '../models/user.dart';
+import 'package:get/get.dart';
+import '../../data/models/user.dart';
+import '../../data/repositories/auth_repository.dart';
+import '../../routes/app_routes.dart';
 
-class AuthProvider with ChangeNotifier {
-  User? _user;
-  String? _token;
-  bool _isLoading = false;
-  String? _errorMessage;
+class AuthController extends GetxController {
+  final AuthRepository _authRepository;
 
-  User? get user => _user;
-  String? get token => _token;
-  bool get isAuthenticated => _token != null;
-  bool get isLoading => _isLoading;
-  String? get errorMessage => _errorMessage;
+  AuthController({AuthRepository? authRepository})
+      : _authRepository = authRepository ?? AuthRepository();
 
-  // Base URL backend PHP (Sesuaikan jika port/IP berbeda)
-  // Tips: Di Android Emulator gunakan 'http://10.0.2.2:8000/backend' untuk mengakses localhost komputer
+  final Rxn<User> user = Rxn<User>();
+  final RxString token = ''.obs;
+  final RxBool isLoading = false.obs;
+  final RxString errorMessage = ''.obs;
+
+  bool get isAuthenticated => token.value.isNotEmpty;
+
   final String _baseUrl = 'http://10.0.2.2:8000/backend';
 
+  @override
+  void onInit() {
+    super.onInit();
+    tryAutoLogin();
+  }
+
   Future<bool> login(String email, String password) async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
+    isLoading.value = true;
+    errorMessage.value = '';
 
     try {
       // TODO: [TUGAS 1 - API LOGIN] Hubungkan dengan API login PHP menggunakan HTTP POST
@@ -34,15 +37,14 @@ class AuthProvider with ChangeNotifier {
       // 1. Kirim HTTP POST request dengan headers Content-Type: application/json.
       // 2. Jika login berhasil (status code 200), parse respon JSON untuk mengambil token dan data user.
       // 3. Simpan token dan data user ke SharedPreferences agar persist setelah aplikasi ditutup.
-      // 4. Set state local _token dan _user, panggil notifyListeners(), lalu return true.
+      // 4. Set state local token.value dan user.value, lalu return true.
       // 5. Jika gagal (status code 400+, 500), tangkap pesan error dari response API dan throw exception.
 
       // --- SEMENTARA: Login Mock-up (HAPUS ATAU UBAH BAGIAN INI SAAT INTEGRASI DENGAN API) ---
       await Future.delayed(const Duration(seconds: 1)); // Simulasi network delay
       if (email == 'kandidat@endo.co.id' && password == 'password123') {
-        _token = 'mock_token_success_for_test';
-        _user = User(id: 2, name: 'Kandidat Test (Mock)', email: email);
-        notifyListeners();
+        token.value = 'mock_token_success_for_test';
+        user.value = User(id: 2, name: 'Kandidat Test (Mock)', email: email);
         return true;
       } else {
         throw Exception('Email atau password salah (Mock). Hubungkan ke PHP API!');
@@ -50,35 +52,31 @@ class AuthProvider with ChangeNotifier {
       // -------------------------------------------------------------------------------------
 
     } catch (error) {
-      _errorMessage = error.toString().replaceAll('Exception: ', '');
-      notifyListeners();
+      errorMessage.value = error.toString().replaceAll('Exception: ', '');
       return false;
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      isLoading.value = false;
     }
   }
 
   Future<void> tryAutoLogin() async {
     // TODO: [TUGAS 1 - AUTO LOGIN] Cek apakah ada token & data user yang tersimpan di SharedPreferences
-    // Jika ada, muat kembali ke variabel _token dan _user untuk bypass halaman login.
-    final prefs = await SharedPreferences.getInstance();
-    if (!prefs.containsKey('user_token')) {
-      return;
+    // Jika ada, muat kembali ke variabel token.value dan user.value untuk bypass halaman login.
+    final savedToken = await _authRepository.getToken();
+    if (savedToken == null) return;
+
+    final savedUser = await _authRepository.getUser();
+    if (savedUser != null) {
+      token.value = savedToken;
+      user.value = savedUser;
     }
-    
-    // Implementasikan logika pembacaan data di sini
-    
-    notifyListeners();
   }
 
   Future<void> logout() async {
-    _token = null;
-    _user = null;
-    
+    token.value = '';
+    user.value = null;
+
     // TODO: [TUGAS 1 - LOGOUT] Bersihkan data login (token & user) dari SharedPreferences saat logout
-    final prefs = await SharedPreferences.getInstance();
-    
-    notifyListeners();
+    await _authRepository.clearAuth();
   }
 }

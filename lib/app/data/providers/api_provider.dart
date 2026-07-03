@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/medical_device.dart';
 
-class ApiService {
+class ApiProvider {
   // Base URL backend PHP (Sesuaikan jika port/IP berbeda)
   // Tips: Di Android Emulator gunakan 'http://10.0.2.2:8000/backend' untuk mengakses localhost komputer
   final String _baseUrl = 'http://10.0.2.2:8000/backend';
@@ -23,12 +23,10 @@ class ApiService {
           throw Exception(responseData['message'] ?? 'Gagal mengambil data.');
         }
       } else {
-        // Menangkap error 500 dari simulasi backend PHP
         final responseData = json.decode(response.body);
         throw Exception(responseData['message'] ?? 'Gagal menghubungi server (${response.statusCode}).');
       }
     } catch (error) {
-      // Re-throw exception agar ditangkap oleh CatalogProvider
       if (error.toString().contains('TimeoutException')) {
         throw Exception('Koneksi timeout. Pastikan server PHP Anda berjalan.');
       }
