@@ -40,6 +40,7 @@ class AuthController extends GetxController {
       // 4. Set state local token.value dan user.value, lalu return true.
       // 5. Jika gagal (status code 400+, 500), tangkap pesan error dari response API dan throw exception.
 
+      return true;
     } catch (error) {
       errorMessage.value = error.toString().replaceAll('Exception: ', '');
       return false;

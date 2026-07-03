@@ -44,6 +44,7 @@ class InquiryController extends GetxController {
       // 3. Jika berhasil (status 201), kosongkan keranjang penawaran menggunakan clear() dan return true.
       // 4. Jika gagal, tangkap pesan error dari backend dan lempar exception.
 
+      return true;
     } catch (error) {
       errorMessage.value = error.toString().replaceAll('Exception: ', '');
       return false;
