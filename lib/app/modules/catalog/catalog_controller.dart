@@ -27,7 +27,7 @@ class CatalogController extends GetxController {
           .toList();
     }
 
-    // TODO: [TUGAS 3 - FILTER KATEGORI] Implementasikan Filter Berdasarkan Kategori Alat Medis
+    // TODO 8: Implementasikan Filter Berdasarkan Kategori Alat Medis
     // Jika selectedCategory.value bukan 'All', saring filteredList agar hanya mengembalikan alat medis
     // yang kategorinya cocok dengan selectedCategory.value (case-insensitive).
 
@@ -47,16 +47,9 @@ class CatalogController extends GetxController {
     try {
       final fetchedDevices = await _deviceRepository.fetchDevices();
 
-      // TODO: [TUGAS 4 - LOAD BOOKMARK] Muat daftar favorit/bookmark dari SharedPreferences
+      // TODO 9: Muat daftar favorit/bookmark dari SharedPreferences
       // Dapatkan list string ID yang difavoritkan (misal key: 'favorite_devices')
       // Tandai device.isFavorite = true untuk device yang ID-nya ada di daftar tersebut.
-      final favList = await _deviceRepository.loadFavoriteIds();
-
-      for (var device in fetchedDevices) {
-        if (favList.contains(device.id)) {
-          device.isFavorite = true;
-        }
-      }
 
       devices.value = fetchedDevices;
     } catch (error) {
@@ -76,16 +69,11 @@ class CatalogController extends GetxController {
       devices[deviceIndex] = updatedDevice;
       devices.refresh();
 
-      // TODO: [TUGAS 4 - SAVE BOOKMARK] Simpan daftar favorit/bookmark secara permanen ke SharedPreferences
+      // TODO 10: Simpan daftar favorit/bookmark secara permanen ke SharedPreferences
       // 1. Dapatkan instansi SharedPreferences.
       // 2. Baca daftar ID favorit saat ini.
       // 3. Tambahkan ID ini jika isFavorite=true, atau hapus jika false.
       // 4. Simpan kembali daftar tersebut sebagai StringList.
-      final favIds = devices
-          .where((d) => d.isFavorite)
-          .map((d) => d.id)
-          .toList();
-      await _deviceRepository.saveFavoriteIds(favIds);
     }
   }
 

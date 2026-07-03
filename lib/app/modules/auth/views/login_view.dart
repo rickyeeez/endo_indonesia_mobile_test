@@ -9,7 +9,7 @@ class LoginView extends GetView<AuthController> {
   @override
   Widget build(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
-    final _emailController = TextEditingController(text: 'kandidat@endo.co.id');
+    final _emailController = TextEditingController(text: 'kandidat@endo.id');
     final _passwordController = TextEditingController(text: 'password123');
 
     void submit() async {
@@ -18,25 +18,11 @@ class LoginView extends GetView<AuthController> {
       final email = _emailController.text.trim();
       final password = _passwordController.text.trim();
 
-      // TODO: [TUGAS 1 - INTEGRASI UI LOGIN] Hubungkan tombol login dengan AuthController
+      // TODO 4: Hubungkan tombol login dengan AuthController
       // 1. Panggil method login di AuthController.
       // 2. Tampilkan Loading Indicator selama proses berlangsung (Gunakan auth.isLoading.value).
       // 3. Jika login berhasil, lakukan navigasi ke CatalogScreen dan hapus stack navigasi sebelumnya (pushReplacement).
       // 4. Jika login gagal, tampilkan pesan error yang didapat dari API menggunakan SnackBar atau Dialog.
-      final success = await controller.login(email, password);
-
-      if (success) {
-        Get.offAllNamed(AppRoutes.catalog);
-      } else {
-        Get.snackbar(
-          'Login Gagal',
-          controller.errorMessage.value.isNotEmpty
-              ? controller.errorMessage.value
-              : 'Gagal login.',
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
-      }
     }
 
     return Scaffold(
@@ -100,14 +86,11 @@ class LoginView extends GetView<AuthController> {
                           prefixIcon: Icon(Icons.email_outlined),
                           border: OutlineInputBorder(),
                         ),
+                        // TODO 5: Buat validasi untuk field email
+                        // Ketentuan:
+                        // 1. Jika email kosong, tampilkan pesan "Email wajib diisi."
+                        // 2. Jika format email tidak valid (tidak mengandung '@'), tampilkan pesan "Format email tidak valid."
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Email wajib diisi.';
-                          }
-                          if (!value.contains('@')) {
-                            return 'Format email tidak valid.';
-                          }
-                          return null;
                         },
                       ),
                       const SizedBox(height: 16.0),
@@ -120,14 +103,12 @@ class LoginView extends GetView<AuthController> {
                           prefixIcon: Icon(Icons.lock_outline),
                           border: OutlineInputBorder(),
                         ),
+                        // TODO 6: Buat validasi untuk field password
+                        // Ketentuan:
+                        // 1. Jika password kosong, tampilkan pesan "Password wajib diisi."
+                        // 2. Jika panjang password kurang dari 6 karakter, tampilkan pesan "Password minimal 6 karakter."
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Password wajib diisi.';
-                          }
-                          if (value.length < 6) {
-                            return 'Password minimal 6 karakter.';
-                          }
-                          return null;
+
                         },
                       ),
                       const SizedBox(height: 24.0),

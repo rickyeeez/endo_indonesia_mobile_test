@@ -40,7 +40,7 @@ void main() {
   // ===========================================================================
   // TUGAS 1 - AUTENTIKASI (AuthController)
   // ===========================================================================
-  group('Unit Test - AuthController (TUGAS 1)', () {
+  group('Unit Test - AuthController (TODO 1-3)', () {
     late AuthController auth;
 
     setUp(() {
@@ -82,8 +82,7 @@ void main() {
 
     // -------------------------------------------------------------------------
     // TEST BERIKUT INI AKAN GAGAL secara default.
-    // Kandidat harus mengimplementasikan penyimpanan token di SharedPreferences
-    // saat login() dan pembacaannya di tryAutoLogin() agar test ini LULUS.
+    // Kandidat harus mengimplementasikan TODO 1 dan TODO 2 agar test ini LULUS.
     // -------------------------------------------------------------------------
     test('Auto-login dengan token tersimpan harus mengembalikan status login', () async {
       // Simpan token palsu ke SharedPreferences
@@ -103,7 +102,7 @@ void main() {
 
     // -------------------------------------------------------------------------
     // TEST BERIKUT INI AKAN GAGAL secara default.
-    // Kandidat harus mengimplementasikan pembersihan SharedPreferences di logout().
+    // Kandidat harus mengimplementasikan TODO 3 agar test ini LULUS.
     // -------------------------------------------------------------------------
     test('Logout harus menghapus token dari SharedPreferences', () async {
       SharedPreferences.setMockInitialValues({
@@ -126,7 +125,7 @@ void main() {
   // ===========================================================================
   // TUGAS 3 - FILTER KATEGORI (CatalogController)
   // ===========================================================================
-  group('Unit Test - CatalogController (TUGAS 3)', () {
+  group('Unit Test - CatalogController (TODO 8)', () {
     test('Penyaringan kategori harus menyaring items berdasarkan kategori', () async {
       SharedPreferences.setMockInitialValues({});
 
@@ -143,7 +142,7 @@ void main() {
       controller.setCategory('Cardiology');
       expect(controller.selectedCategory.value, 'Cardiology');
 
-      // 3. Verifikasi daftar items tersaring (AKAN GAGAL sebelum Tugas 3 diselesaikan)
+      // 3. Verifikasi daftar items tersaring (AKAN GAGAL sebelum TODO 8 diselesaikan)
       expect(
         controller.items.length,
         1,
@@ -172,7 +171,7 @@ void main() {
   // ===========================================================================
   // TUGAS 4 - BOOKMARK / FAVORIT (CatalogController)
   // ===========================================================================
-  group('Unit Test - CatalogController Bookmark (TUGAS 4)', () {
+  group('Unit Test - CatalogController Bookmark (TODO 9-10)', () {
     test('Harus memuat daftar favorit dari SharedPreferences saat loadDevices', () async {
       // Simpan ID favorit palsu di SharedPreferences
       SharedPreferences.setMockInitialValues({
@@ -199,8 +198,7 @@ void main() {
 
     // -------------------------------------------------------------------------
     // TEST BERIKUT INI AKAN GAGAL secara default.
-    // Kandidat harus mengimplementasikan penyimpanan favorit ke SharedPreferences
-    // di toggleFavorite() agar test ini LULUS.
+    // Kandidat harus mengimplementasikan TODO 10 agar test ini LULUS.
     // -------------------------------------------------------------------------
     test('Toggle favorite harus menyimpan perubahan ke SharedPreferences', () async {
       SharedPreferences.setMockInitialValues({});
@@ -250,7 +248,7 @@ void main() {
   // ===========================================================================
   // TUGAS 5 - SUBMIT INQUIRY (InquiryController)
   // ===========================================================================
-  group('Unit Test - InquiryController Submit Inquiry (TUGAS 5)', () {
+  group('Unit Test - InquiryController Submit Inquiry (TODO 11)', () {
     late InquiryController inquiry;
 
     setUp(() {
@@ -311,7 +309,7 @@ void main() {
   // ===========================================================================
   // TUGAS 6 - BATAS STOK & KUANTITAS (InquiryController)
   // ===========================================================================
-  group('Unit Test - InquiryController (TUGAS 6 - Batas Stok)', () {
+  group('Unit Test - InquiryController (TODO 12-13 - Batas Stok)', () {
     late InquiryController inquiryController;
     late MedicalDevice dummyDevice;
 
@@ -362,7 +360,7 @@ void main() {
 
       // -------------------------------------------------------------------------
       // TEST BERIKUT INI SEHARUSNYA MELEMPAR EXCEPTION (FAIL BY DEFAULT)
-      // Kandidat harus memperbaiki logic di InquiryController.addItem agar test ini LULUS.
+      // Kandidat harus mengimplementasikan TODO 12 agar test ini LULUS.
       // -------------------------------------------------------------------------
       expect(
         () => inquiryController.addItem(dummyDevice),

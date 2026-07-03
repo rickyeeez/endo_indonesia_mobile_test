@@ -12,7 +12,36 @@
     }
   ],
   "paths": {
-    "login.php": {
+    "/ping.php": {
+      "get": {
+        "summary": "Health Check / Ping",
+        "description": "Memeriksa apakah server aktif dan berjalan.",
+        "responses": {
+          "200": {
+            "description": "Server aktif",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "success" },
+                    "message": { "type": "string", "example": "Server is running." },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "timestamp": { "type": "string", "format": "date-time", "example": "2025-07-03T10:30:00+07:00" },
+                        "version": { "type": "string", "example": "1.0.0" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login.php": {
       "post": {
         "summary": "User Login",
         "description": "Autentikasi pengguna dan mengembalikan token serta data profil user.",
@@ -27,7 +56,7 @@
                   "email": {
                     "type": "string",
                     "format": "email",
-                    "example": "kandidat@endo.co.id"
+                    "example": "kandidat@endo.id"
                   },
                   "password": {
                     "type": "string",
@@ -58,7 +87,7 @@
                           "properties": {
                             "id": { "type": "integer", "example": 1 },
                             "name": { "type": "string", "example": "Kandidat Test" },
-                            "email": { "type": "string", "example": "kandidat@endo.co.id" }
+                            "email": { "type": "string", "example": "kandidat@endo.id" }
                           }
                         }
                       }
@@ -102,7 +131,7 @@
         }
       }
     },
-    "devices.php": {
+    "/devices.php": {
       "get": {
         "summary": "Daftar Alat Medis",
         "description": "Mengambil daftar alat medis dengan opsi pencarian dan simulasi error.",
@@ -153,7 +182,7 @@
         }
       }
     },
-    "submit_inquiry.php": {
+    "/submit_inquiry.php": {
       "post": {
         "summary": "Pengajuan Penawaran (Inquiry)",
         "description": "Mengirimkan formulir penawaran alat medis dan mengurangi stok barang.",

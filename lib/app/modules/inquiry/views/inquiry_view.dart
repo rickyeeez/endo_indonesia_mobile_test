@@ -44,7 +44,7 @@ class InquiryView extends GetView<InquiryController> {
                     ),
                     const SizedBox(height: 16),
 
-                    // TODO: [TUGAS 5 - VALIDASI FORM] Implementasikan Validasi Input
+                    // TODO 14: Implementasikan Validasi Input
                     // 1. Nama Lengkap: Wajib diisi, minimal 3 karakter.
                     // 2. Nama Rumah Sakit: Wajib diisi.
                     // 3. Email: Wajib diisi dan harus menggunakan format email yang valid.
@@ -57,10 +57,6 @@ class InquiryView extends GetView<InquiryController> {
                         border: OutlineInputBorder(),
                       ),
                       validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Nama lengkap harus diisi (Validasi awal)';
-                        }
-                        return null;
                       },
                     ),
                     const SizedBox(height: 12),
@@ -72,10 +68,6 @@ class InquiryView extends GetView<InquiryController> {
                         border: OutlineInputBorder(),
                       ),
                       validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Nama Rumah Sakit harus diisi';
-                        }
-                        return null;
                       },
                     ),
                     const SizedBox(height: 12),
@@ -88,10 +80,6 @@ class InquiryView extends GetView<InquiryController> {
                         border: OutlineInputBorder(),
                       ),
                       validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Email harus diisi';
-                        }
-                        return null;
                       },
                     ),
                     const SizedBox(height: 20),
@@ -258,7 +246,7 @@ class InquiryView extends GetView<InquiryController> {
                                 color: Colors.red),
                             onPressed: () {
                               try {
-                                // TODO: [TUGAS 6 - VALIDASI KUANTITAS ADD] Di sini memanggil updateQuantity dengan menambahkan 1.
+                                // TODO 15: Di sini memanggil updateQuantity dengan menambahkan 1.
                                 // Pengecekan kuantitas maksimum harus divalidasi terhadap maxStock di controller.
                                 controller.updateQuantity(
                                     item.id, item.quantity + 1, maxStock);

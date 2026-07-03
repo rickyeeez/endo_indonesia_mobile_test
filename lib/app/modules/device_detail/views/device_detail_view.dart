@@ -14,7 +14,7 @@ class DeviceDetailView extends GetView<DeviceDetailController> {
     final inquiry = Get.find<InquiryController>();
 
     // ============================================================================================
-    // TODO: [TUGAS 2 - DETAIL ALAT MEDIS] Desain Ulang Halaman Detail Alat Medis
+    // TODO 7: Desain Ulang Halaman Detail Alat Medis
     // ============================================================================================
     // UI di bawah ini sengaja dibuat basic/berantakan.
     // Kandidat dipersilakan mendesain ulang halaman ini sekreatif mungkin

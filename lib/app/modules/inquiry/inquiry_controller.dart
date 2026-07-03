@@ -29,7 +29,7 @@ class InquiryController extends GetxController {
     errorMessage.value = '';
 
     try {
-      // TODO: [TUGAS 5 - SUBMIT INQUIRY API] Implementasikan Pengiriman Inquiry ke PHP API 'submit_inquiry.php'
+      // TODO 11: Implementasikan Pengiriman Inquiry ke PHP API 'submit_inquiry.php'
       // 1. Siapkan body payload JSON sesuai format backend:
       //    {
       //       "name": name,
@@ -43,16 +43,6 @@ class InquiryController extends GetxController {
       // 2. Kirim HTTP POST request ke '$_baseUrl/submit_inquiry.php'
       // 3. Jika berhasil (status 201), kosongkan keranjang penawaran menggunakan clear() dan return true.
       // 4. Jika gagal, tangkap pesan error dari backend dan lempar exception.
-
-      // --- SEMENTARA: Mock-up Request Sukses (Ubah/Hapus saat integrasi API) ---
-      await Future.delayed(const Duration(milliseconds: 1500));
-      if (email.contains('@')) {
-        clear();
-        return true;
-      } else {
-        throw Exception('Koneksi backend gagal. Hubungkan ke PHP API!');
-      }
-      // ------------------------------------------------------------------------
 
     } catch (error) {
       errorMessage.value = error.toString().replaceAll('Exception: ', '');
@@ -70,14 +60,11 @@ class InquiryController extends GetxController {
 
     if (items.containsKey(device.id)) {
       // ---------------------------------------------------------------------------------
-      // TODO: [BUG - TUGAS 6 - BATAS STOK ADD] Kode di bawah ini memperbolehkan penambahan kuantitas melewati batas stok!
+      // TODO 12: Kode di bawah ini memperbolehkan penambahan kuantitas melewati batas stok!
       // Kandidat harus memperbaikinya dengan menambahkan pengecekan stok yang valid,
       // misal jika kuantitas saat ini sudah menyamai device.stock maka harus men-throw Exception('Stok terbatas!').
       // ---------------------------------------------------------------------------------
       final existingItem = items[device.id]!;
-      if (existingItem.quantity >= device.stock) {
-        throw Exception('Stok terbatas!');
-      }
       items[device.id] = InquiryItem(
         id: existingItem.id,
         name: existingItem.name,
@@ -94,28 +81,9 @@ class InquiryController extends GetxController {
     }
   }
 
-  // TODO: [TUGAS 6 - BATAS STOK UPDATE] Buat fungsi untuk mengurangi/mengubah kuantitas item secara langsung di keranjang penawaran
+  // TODO 13: Buat fungsi untuk mengurangi/mengubah kuantitas item secara langsung di keranjang penawaran
   // Pastikan tetap melakukan validasi agar kuantitas tidak <= 0 dan tidak > stok alat medis yang tersedia.
   void updateQuantity(String id, int newQuantity, int maxStock) {
-    if (newQuantity <= 0) {
-      removeItem(id);
-      return;
-    }
-
-    // Pengecekan batas stok
-    if (newQuantity > maxStock) {
-      throw Exception('Stok tidak mencukupi (Tersisa: $maxStock)');
-    }
-
-    if (items.containsKey(id)) {
-      final existingItem = items[id]!;
-      items[id] = InquiryItem(
-        id: existingItem.id,
-        name: existingItem.name,
-        quantity: newQuantity,
-        price: existingItem.price,
-      );
-    }
   }
 
   void removeItem(String productId) {

@@ -29,7 +29,7 @@ class AuthController extends GetxController {
     errorMessage.value = '';
 
     try {
-      // TODO: [TUGAS 1 - API LOGIN] Hubungkan dengan API login PHP menggunakan HTTP POST
+      // TODO 1: Hubungkan dengan API login PHP menggunakan HTTP POST
       // URL Endpoint: '$_baseUrl/login.php'
       // Payload JSON: {"email": email, "password": password}
       //
@@ -40,17 +40,6 @@ class AuthController extends GetxController {
       // 4. Set state local token.value dan user.value, lalu return true.
       // 5. Jika gagal (status code 400+, 500), tangkap pesan error dari response API dan throw exception.
 
-      // --- SEMENTARA: Login Mock-up (HAPUS ATAU UBAH BAGIAN INI SAAT INTEGRASI DENGAN API) ---
-      await Future.delayed(const Duration(seconds: 1)); // Simulasi network delay
-      if (email == 'kandidat@endo.co.id' && password == 'password123') {
-        token.value = 'mock_token_success_for_test';
-        user.value = User(id: 2, name: 'Kandidat Test (Mock)', email: email);
-        return true;
-      } else {
-        throw Exception('Email atau password salah (Mock). Hubungkan ke PHP API!');
-      }
-      // -------------------------------------------------------------------------------------
-
     } catch (error) {
       errorMessage.value = error.toString().replaceAll('Exception: ', '');
       return false;
@@ -60,23 +49,11 @@ class AuthController extends GetxController {
   }
 
   Future<void> tryAutoLogin() async {
-    // TODO: [TUGAS 1 - AUTO LOGIN] Cek apakah ada token & data user yang tersimpan di SharedPreferences
+    // TODO 2: Cek apakah ada token & data user yang tersimpan di SharedPreferences
     // Jika ada, muat kembali ke variabel token.value dan user.value untuk bypass halaman login.
-    final savedToken = await _authRepository.getToken();
-    if (savedToken == null) return;
-
-    final savedUser = await _authRepository.getUser();
-    if (savedUser != null) {
-      token.value = savedToken;
-      user.value = savedUser;
-    }
   }
 
   Future<void> logout() async {
-    token.value = '';
-    user.value = null;
-
-    // TODO: [TUGAS 1 - LOGOUT] Bersihkan data login (token & user) dari SharedPreferences saat logout
-    await _authRepository.clearAuth();
+    // TODO 3: Bersihkan data login (token & user) dari SharedPreferences saat logout
   }
 }
