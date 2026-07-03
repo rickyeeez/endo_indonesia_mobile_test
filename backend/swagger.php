@@ -17,7 +17,7 @@
   <script>
     window.onload = function() {
       window.ui = SwaggerUIBundle({
-        url: "openapi.json",
+        url: "<?php echo rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\'); ?>/openapi.json",
         dom_id: '#swagger-ui',
         deepLinking: true,
         presets: [

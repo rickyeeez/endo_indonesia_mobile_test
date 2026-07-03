@@ -7,7 +7,7 @@ import 'app/modules/auth/auth_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await InitialBinding().dependencies();
+  InitialBinding().dependencies();
   runApp(const MyApp());
 }
 
