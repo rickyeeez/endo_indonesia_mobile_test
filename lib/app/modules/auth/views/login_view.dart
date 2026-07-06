@@ -23,6 +23,8 @@ class LoginView extends GetView<AuthController> {
       // 2. Tampilkan Loading Indicator selama proses berlangsung (Gunakan auth.isLoading.value).
       // 3. Jika login berhasil, lakukan navigasi ke CatalogScreen dan hapus stack navigasi sebelumnya (pushReplacement).
       // 4. Jika login gagal, tampilkan pesan error yang didapat dari API menggunakan SnackBar atau Dialog.
+
+      final bool isSuccess = await controller.login("email", "password");
     }
 
     return Scaffold(
@@ -88,9 +90,11 @@ class LoginView extends GetView<AuthController> {
                         ),
                         // TODO 5: Buat validasi untuk field email
                         // Ketentuan:
-                        // 1. Jika email kosong, tampilkan pesan "Email wajib diisi."
-                        // 2. Jika format email tidak valid (tidak mengandung '@'), tampilkan pesan "Format email tidak valid."
+                        // Jika format email tidak valid (tidak mengandung '@'), tampilkan pesan "Format email tidak valid."
                         validator: (value) {
+                          if(value == null || value == ''){
+                            return 'Email wajib diisi.';
+                          }
                         },
                       ),
                       const SizedBox(height: 16.0),
